@@ -1,9 +1,6 @@
 package com.siotman.experimental.stackoverflow.q71096569.test;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -11,18 +8,16 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
-@Table(name = "orders")
+@Table(name = "order_table")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    User user;
+
+    String orderName;
 
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(
@@ -30,5 +25,6 @@ public class Order {
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
             orphanRemoval = true)
-    private List<OrderItem> orderItems;
+    @JsonIgnore
+    List<OrderItem> orderItems;
 }
