@@ -1,4 +1,3 @@
 rootProject.name = 'gw-google-api'
 
-// https://github.com/gradle/gradle/issues/13891
 includeFlat "lib-common"

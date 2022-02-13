@@ -1,9 +1,24 @@
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
-    id "org.jetbrains.kotlin.kapt" version "1.6.10"
-    id "org.jetbrains.kotlin.plugin.noarg" version "1.6.10"
-    id "org.jetbrains.kotlin.plugin.allopen" version "1.6.10"
+buildscript {
+    ext.kotlin_version = '1.6.10'
+    ext.spring_boot_version = '2.6.3'
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+
+    repositories {
+        mavenCentral()
+    }
 }
+
+
+apply plugin: 'java'
+apply plugin: "org.jetbrains.kotlin.jvm"
+apply plugin: "org.jetbrains.kotlin.plugin.jpa"
+apply plugin: "org.jetbrains.kotlin.plugin.spring"
+apply plugin: "org.jetbrains.kotlin.plugin.allopen"
 
 group 'com.siotman'
 version '1.0-SNAPSHOT'
