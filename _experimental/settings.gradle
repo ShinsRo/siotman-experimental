@@ -1,0 +1,5 @@
+rootProject.name = "experimental"
+
+
+//// https://github.com/gradle/gradle/issues/13891
+includeFlat "lib-common"
