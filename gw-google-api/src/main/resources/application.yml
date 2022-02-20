@@ -1,0 +1,5 @@
+google:
+  oauth:
+    client:
+      id: ${/siotman/google/oauth/client/id}
+      pw: ${/siotman/google/oauth/client/pw}
