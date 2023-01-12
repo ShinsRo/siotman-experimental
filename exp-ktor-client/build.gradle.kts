@@ -7,11 +7,11 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.siotman"
+group = "com.siotman.experimental"
 version = "0.1.0"
 
 application {
-    mainClass.set("com.siotman.ktor.client.App")
+    mainClass.set("com.siotman.experimental.ktor.client.App")
 }
 
 repositories {

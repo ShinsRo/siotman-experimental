@@ -1,4 +1,4 @@
-package com.siotman.ktor.client
+package com.siotman.experimental.ktor.client
 
 import java.time.LocalDateTime
 
