@@ -35,6 +35,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 }
 
 tasks.getByName<Test>("test") {
