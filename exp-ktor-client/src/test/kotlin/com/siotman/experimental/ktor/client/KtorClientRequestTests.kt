@@ -78,7 +78,7 @@ class KtorClientRequestTests {
                 // Query String 정의
                 // URLBuilder.parameters
                 parameters.append("param1", "value") // ...?param1=value
-                encodedParameters.append("param2", "값") // ...&param2=%EA%B0%92
+                encodedParameters.append("param2", "값") // ...&param2=값
 
                 // Fragment 정의
                 fragment = "fragment1" // #fragment1
