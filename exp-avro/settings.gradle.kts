@@ -1,9 +1,10 @@
 rootProject.name = "exp-avro"
 
 include("story-business")
-include("story-data-rest")
-include("story-schema-registry-server")
+include("story-data-client")
+include("story-data-server")
 include("story-persistence")
+include("story-schema-registry-server")
 
 pluginManagement {
 
