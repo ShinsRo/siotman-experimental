@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <title>Edwards Curve Graph</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .curve {
+            fill: none;
+            stroke: blue;
+            stroke-width: 2px;
+        }
+    </style>
+</head>
+<body>
+<script>
+    // 2차평면 사이즈
+    const margin = {top: 20, right: 20, bottom: 30, left: 40};
+    const width = 600 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    // SVG 정의
+    const svg = d3.select("body")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // x, y 스케일 정의
+    const x = d3.scaleLinear().domain([-1.1, 1.1]).range([0, width]);
+    const y = d3.scaleLinear().domain([-1.1, 1.1]).range([height, 0]);
+
+    // x, y 축 그리기
+    const xAxis = d3.axisBottom(x);
+    const yAxis = d3.axisLeft(y);
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+    svg.append("g")
+        .attr("class", "axis")
+        .call(yAxis);
+
+    const curve = d3.line()
+        .x((d) => x(d[0]))
+        .y((d) => y(d[1]))
+        .curve(d3.curveCardinal);
+
+    const data = d3.range(-1.1, 1.1, 0.01).map((x) => {
+        const y2 = 1 - (121665 / 121666) * x * x;
+        const y = Math.sqrt(Math.abs(y2));
+        return [x, y];
+    });
+
+    svg.append("path")
+        .datum(data)
+        .attr("class", "curve")
+        .attr("d", curve);
+</script>
+</body>
+</html>
