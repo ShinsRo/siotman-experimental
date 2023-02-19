@@ -11,11 +11,9 @@ MySQL 이 설치된 환경이어야하며, 아래와 같은 테이블 생성이 
 ```SQL
 CREATE TABLE employees
 (
-    emp_no     INT         NOT NULL,
-    birth_date DATE        NOT NULL,
+    id         INT         NOT NULL PRIMARY KEY,
     full_name  VARCHAR(30) NOT NULL,
-    gender     ENUM ('M','F') NOT NULL,
-    PRIMARY KEY (emp_no)
+    off_days   INT         NOT NULL DEFAULT 0
 );
 ```
 
