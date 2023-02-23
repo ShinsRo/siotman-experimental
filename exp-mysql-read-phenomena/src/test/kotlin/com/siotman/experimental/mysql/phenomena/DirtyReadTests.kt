@@ -2,6 +2,10 @@ package com.siotman.experimental.mysql.phenomena
 
 import io.kotest.core.spec.Spec
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.data.forAll
+import io.kotest.data.headers
+import io.kotest.data.row
+import io.kotest.data.table
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,6 +23,14 @@ private object DirtyReadEmployeeTable : IntIdTable() {
 }
 
 private typealias Employees = DirtyReadEmployeeTable
+
+private fun connectionValueOf(intValue: Int) = when (intValue) {
+    Connection.TRANSACTION_READ_UNCOMMITTED -> "READ_UNCOMMITTED"
+    Connection.TRANSACTION_READ_COMMITTED -> "READ_COMMITTED"
+    Connection.TRANSACTION_REPEATABLE_READ -> "REPEATABLE_READ"
+    Connection.TRANSACTION_SERIALIZABLE -> "SERIALIZABLE"
+    else -> throw Exception("다루지 않거나 정의하지 않은 격리수준입니다.")
+}
 
 class DirtyReadTests : StringSpec({
     // Database 설정
@@ -94,39 +106,48 @@ class DirtyReadTests : StringSpec({
     }
 
     // === 테스트 케이스 시작 ===
-    "Dirty Reads 는 READ_UNCOMMITTED 격리수준에서 발생한다" {
-        transaction(statement = Transaction::initShinsRo)
+    "Dirty Reads 는 READ_UNCOMMITTED 격리수준에서만 발생한다" {
+        forAll(
+            table(
+                headers("신스로의 격리수준", "카리나의 격리수준"),
+                row(Connection.TRANSACTION_READ_UNCOMMITTED, Connection.TRANSACTION_READ_COMMITTED),
+                row(Connection.TRANSACTION_READ_COMMITTED, Connection.TRANSACTION_READ_COMMITTED),
+                row(Connection.TRANSACTION_REPEATABLE_READ, Connection.TRANSACTION_READ_COMMITTED),
+//                InnoDB 의 경우, SERIALIZABLE 에서 모든 select 가 select ... for share 로 치환됩니다.
+//                해서 위키의 시나리오가 MySQL innoDB 에서는 어플리케이션 데드락을 발생시키는 바, 결과를 눈으로 확인할 순 없습니다.
+//                row(Connection.TRANSACTION_SERIALIZABLE, Connection.TRANSACTION_READ_UNCOMMITTED)
+            )
+        ) { shinsRoIsolation, karinaIsolation ->
+            println("신스로의 격리수준이 ${connectionValueOf(shinsRoIsolation)} 일 때는 아래와 같습니다.")
 
-        val shinsRoJob = launch {
-            receiveDirectivesUntilCommit(userForShins, Connection.TRANSACTION_READ_UNCOMMITTED)
+            transaction(statement = Transaction::initShinsRo)
+
+            val shinsRoJob = launch {
+                receiveDirectivesUntilCommit(userForShins, shinsRoIsolation)
+            }
+
+            val karinaJob = launch {
+                receiveDirectivesUntilCommit(userForKarina, karinaIsolation)
+            }
+
+            val shinsRoInbound = coroutineInBoundChannels[userForShins]!!
+            val karinaInbound = coroutineInBoundChannels[userForKarina]!!
+
+            shinsRoInbound.send(directives.selectShinsRoOffDays)
+
+            delay(1000)
+            karinaInbound.send(directives.increaseShinsRoOffDaysOne)
+
+            delay(1000)
+            shinsRoInbound.send(directives.selectShinsRoOffDays)
+
+            shinsRoInbound.send(directives.commit)
+            karinaInbound.send(directives.commit)
+
+            shinsRoJob.join()
+            karinaJob.join()
         }
-
-        val karinaJob = launch {
-            receiveDirectivesUntilCommit(userForKarina, Connection.TRANSACTION_SERIALIZABLE)
-        }
-
-        val shinsRoInbound = coroutineInBoundChannels[userForShins]!!
-        val karinaInbound = coroutineInBoundChannels[userForKarina]!!
-
-        shinsRoInbound.send(directives.selectShinsRoOffDays)
-
-        delay(1000)
-        karinaInbound.send(directives.increaseShinsRoOffDaysOne)
-
-        delay(1000)
-        shinsRoInbound.send(directives.selectShinsRoOffDays)
-
-        shinsRoInbound.send(directives.commit)
-        karinaInbound.send(directives.commit)
-
-        shinsRoJob.join()
-        karinaJob.join()
     }
-
-    "Dirty Reads 는 READ_UNCOMMITTED 외 격리수준에서 발생하지 않는다" {
-        TODO()
-    }
-
 }) {
     override suspend fun beforeSpec(spec: Spec) {
         super.beforeSpec(spec)
