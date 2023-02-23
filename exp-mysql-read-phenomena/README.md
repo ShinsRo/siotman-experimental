@@ -6,21 +6,14 @@
 
 의 간단한 테스트 코드 예제를 담은 모듈이자, 관련 블로그(링크 WIP)에 대한 예제 테스트 코드를 담은 모듈입니다.
 
-MySQL 이 설치된 환경이어야하며, 아래와 같은 테이블 생성이 필요합니다.
+MySQL 이 설치된 환경이어야하며, 아래와 같이 데이터베이스와 계정을 생성해두었습니다.
 
-```SQL
-CREATE TABLE employees
-(
-    id         INT         NOT NULL PRIMARY KEY,
-    full_name  VARCHAR(30) NOT NULL,
-    off_days   INT         NOT NULL DEFAULT 0
-);
-```
+```sql
+create database read_phenomena_test;
 
-테스트 코드 상 사용하는 디비 접속정보는 아래와 같습니다.
+create user 'shinsro'@'localhost';
+create user 'karina'@'localhost';
 
-```yaml
-DbUrl: jdbc:mysql://localhost:3306/employees
-DbUsername: root
-DbPassword: 
+grant all privileges on read_phenomena_test.* to 'shinsro'@'localhost';
+grant all privileges on read_phenomena_test.* to 'karina'@'localhost';
 ```
