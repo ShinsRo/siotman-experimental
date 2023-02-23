@@ -57,8 +57,9 @@ class DirtyReadTests : StringSpec({
         // 이벤트 행위 1: 신스로의 휴가일수 조회
         val selectShinsRoOffDays = TxDirective { username ->
             val statement = Employees.select(where = { Employees.fullName eq shinsRoFullname })
+            val offDays = statement.single()[Employees.offDays]
 
-            println("[$username] $shinsRoFullname 의 휴가일수는 ${statement.single()[Employees.id].value} 입니다.")
+            println("[$username] $shinsRoFullname 의 휴가일수는 $offDays 입니다.")
         }
 
         // 이벤트 행위 2: 신스로의 휴가일수 + 1
@@ -82,6 +83,7 @@ class DirtyReadTests : StringSpec({
     suspend fun receiveDirectivesUntilCommit(username: String, isolation: Int) {
         val session = dbSessions[username]
         val inbound = coroutineInBoundChannels[username]!!
+        println("[$username] is now taking directives.")
 
         newSuspendedTransaction(db = session, transactionIsolation = isolation) {
             do {
@@ -96,28 +98,26 @@ class DirtyReadTests : StringSpec({
         transaction(statement = Transaction::initShinsRo)
 
         val shinsRoJob = launch {
-            println("ShinsRo is now preparing taking directives.")
-            receiveDirectivesUntilCommit(userForShins, Connection.TRANSACTION_READ_COMMITTED)
+            receiveDirectivesUntilCommit(userForShins, Connection.TRANSACTION_READ_UNCOMMITTED)
         }
 
         val karinaJob = launch {
-            println("Karina is now preparing taking directives.")
             receiveDirectivesUntilCommit(userForKarina, Connection.TRANSACTION_SERIALIZABLE)
         }
 
         val shinsRoInbound = coroutineInBoundChannels[userForShins]!!
-        val karinaRoInbound = coroutineInBoundChannels[userForKarina]!!
+        val karinaInbound = coroutineInBoundChannels[userForKarina]!!
 
         shinsRoInbound.send(directives.selectShinsRoOffDays)
 
         delay(1000)
-        karinaRoInbound.send(directives.increaseShinsRoOffDaysOne)
+        karinaInbound.send(directives.increaseShinsRoOffDaysOne)
 
         delay(1000)
         shinsRoInbound.send(directives.selectShinsRoOffDays)
 
         shinsRoInbound.send(directives.commit)
-        karinaRoInbound.send(directives.commit)
+        karinaInbound.send(directives.commit)
 
         shinsRoJob.join()
         karinaJob.join()
