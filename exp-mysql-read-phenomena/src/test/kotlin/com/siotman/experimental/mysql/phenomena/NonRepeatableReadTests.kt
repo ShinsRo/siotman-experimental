@@ -17,19 +17,15 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.Connection
 
-class DirtyReadTests : ReadPhenomenaTests({
+class NonRepeatableReadTests : ReadPhenomenaTests({
 
-    "Dirty Reads 는 READ_UNCOMMITTED 격리수준에서만 발생한다" {
+    "READ_UNCOMMITTED, READ_COMMITTED 에서는 NonRepeatableReads 현상이 발생한다" {
         forAll(
             table(
                 headers("신스로의 격리수준", "카리나의 격리수준"),
                 row(Connection.TRANSACTION_READ_UNCOMMITTED, Connection.TRANSACTION_READ_COMMITTED),
                 row(Connection.TRANSACTION_READ_COMMITTED, Connection.TRANSACTION_READ_COMMITTED),
-                row(Connection.TRANSACTION_REPEATABLE_READ, Connection.TRANSACTION_READ_COMMITTED),
-
-//                InnoDB 의 경우, SERIALIZABLE 에서 모든 select 가 select ... for share 로 치환됩니다.
-//                해서 위키의 시나리오가 MySQL innoDB 에서는 어플리케이션 데드락을 발생시키는 바, 결과를 눈으로 확인할 순 없습니다.
-//                row(Connection.TRANSACTION_SERIALIZABLE, Connection.TRANSACTION_READ_UNCOMMITTED)
+                row(Connection.TRANSACTION_REPEATABLE_READ, Connection.TRANSACTION_READ_COMMITTED)
             )
         ) { shinsRoIsolation, karinaIsolation ->
             println("신스로의 격리수준이 ${connectionValueOf(shinsRoIsolation)} 일 때는 아래와 같습니다.")
@@ -65,13 +61,17 @@ class DirtyReadTests : ReadPhenomenaTests({
                 println("[$username] $shinsRoFullname 의 휴가일수는 $daysOff 입니다.")
             })
 
-            // 2. 카리나가 신스로의 휴가일수를 +1
-            karinaInbound.send(TxScenario { username ->
+            // 2. 카리나가 신스로의 휴가일수를 +1 하고 커밋
+            karinaInbound.send(TxScenario(isEnd = true) { username ->
                 val daysOff = Employees.increaseDaysOff(shinsRoFullname, 1)
+                commit()
 
                 daysOff shouldBeExactly 1
                 println("[$username] $shinsRoFullname 의 휴가일수를 +1 했습니다.")
             })
+
+            karinaInbound.close()
+            karinaJob.join()
 
             // 3. 신스로가 신스로의 휴가일수를 조회
             shinsRoInbound.send(TxScenario { username ->
@@ -79,7 +79,7 @@ class DirtyReadTests : ReadPhenomenaTests({
 
                 daysOff shouldBeExactly when (shinsRoIsolation) {
                     Connection.TRANSACTION_READ_UNCOMMITTED -> 1
-                    Connection.TRANSACTION_READ_COMMITTED -> 0
+                    Connection.TRANSACTION_READ_COMMITTED -> 1
                     Connection.TRANSACTION_REPEATABLE_READ -> 0
 
                     else -> throw NotImplementedError()
@@ -88,13 +88,9 @@ class DirtyReadTests : ReadPhenomenaTests({
             })
 
             shinsRoInbound.send(TxScenario(isEnd = true) { commit() })
-            karinaInbound.send(TxScenario(isEnd = true) { commit() })
-
             shinsRoInbound.close()
-            karinaInbound.close()
 
             shinsRoJob.join()
-            karinaJob.join()
         }
     }
 })
