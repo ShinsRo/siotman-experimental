@@ -30,5 +30,10 @@ object Employees : IntIdTable() {
     }) {
         it.update(daysOff, daysOff + amount)
     }
+
+    // 사용 휴가 일수가 주어진 daysOff 이상인 Employees
+    fun findAllByDaysOffGte(daysOff: Int) = select {
+        Employees.daysOff greaterEq daysOff
+    }.map { Employee.wrapRow(it) }
 }
 

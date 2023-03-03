@@ -28,7 +28,7 @@ class DirtyReadTests : ReadPhenomenaTests({
                 row(Connection.TRANSACTION_REPEATABLE_READ, Connection.TRANSACTION_READ_COMMITTED),
 
 //                InnoDB 의 경우, SERIALIZABLE 에서 모든 select 가 select ... for share 로 치환됩니다.
-//                해서 위키의 시나리오가 MySQL innoDB 에서는 어플리케이션 데드락을 발생시키는 바, 결과를 눈으로 확인할 순 없습니다.
+//                lock base 로 다른 트랜잭션을 기다리기 때문에 더티리드가 발생하지 않음이 보장되니, 따로 테스트하진 않겠습니다.
 //                row(Connection.TRANSACTION_SERIALIZABLE, Connection.TRANSACTION_READ_UNCOMMITTED)
             )
         ) { shinsRoIsolation, karinaIsolation ->
