@@ -22,4 +22,12 @@ abstract class ReadPhenomenaTests(body: StringSpec.() -> Unit = {}) : StringSpec
             SchemaUtils.create(Employees)
         }
     }
+
+    override suspend fun afterSpec(spec: Spec) {
+        super.afterSpec(spec)
+
+        transaction {
+            SchemaUtils.drop(Employees)
+        }
+    }
 }
