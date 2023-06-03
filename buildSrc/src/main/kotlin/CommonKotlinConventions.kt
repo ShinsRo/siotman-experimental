@@ -21,6 +21,7 @@ class CommonKotlinConventions : Plugin<Project> {
         apply(plugin = "org.jetbrains.kotlin.jvm")
         apply(plugin = "org.jetbrains.kotlin.plugin.noarg")
         apply(plugin = "org.jetbrains.kotlin.plugin.allopen")
+        apply(plugin = "org.jmailen.kotlinter")
 
         the(JavaPluginExtension::class).apply {
             sourceCompatibility = JavaVersion.VERSION_1_8
