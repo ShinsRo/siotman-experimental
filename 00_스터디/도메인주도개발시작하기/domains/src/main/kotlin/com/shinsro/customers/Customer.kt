@@ -1,5 +1,6 @@
 package com.shinsro.customers
 
+import com.shinsro.common.StringValue
 import com.shinsro.privacies.PersonName
 
 class Customer(
@@ -7,5 +8,5 @@ class Customer(
     val customerName: CustomerName,
 )
 
-class CustomerId(private val value: String) : CharSequence by value
-class CustomerName(private val value: String) : PersonName(value)
+class CustomerId(value: String) : StringValue(value)
+class CustomerName(value: String) : PersonName(value)

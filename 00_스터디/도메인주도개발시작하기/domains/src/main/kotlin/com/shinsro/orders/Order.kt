@@ -1,5 +1,6 @@
 package com.shinsro.orders
 
+import com.shinsro.common.StringValue
 import com.shinsro.customers.Customer
 import com.shinsro.products.Product
 
@@ -12,4 +13,4 @@ class Order(
     val products: List<Product>,
 )
 
-class OrderNo(val value: String)
+class OrderNo(value: String) : StringValue(value)

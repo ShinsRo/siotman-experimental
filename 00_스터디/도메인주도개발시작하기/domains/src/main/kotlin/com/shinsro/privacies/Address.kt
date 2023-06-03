@@ -1,5 +1,7 @@
 package com.shinsro.privacies
 
+import com.shinsro.common.StringValue
+
 class Address(
     val base: String,
     val detail: String,
@@ -9,4 +11,4 @@ class Address(
     val city: String? = null,
 )
 
-class ZipCode(private val value: String) : CharSequence by value
+class ZipCode(value: String) : StringValue(value)

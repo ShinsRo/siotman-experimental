@@ -1,4 +1,6 @@
 package com.shinsro.categories
 
+import com.shinsro.common.StringValue
+
 class Category(val id: CategoryId)
-class CategoryId(private val value: String) : CharSequence by value
+class CategoryId(value: String) : StringValue(value)

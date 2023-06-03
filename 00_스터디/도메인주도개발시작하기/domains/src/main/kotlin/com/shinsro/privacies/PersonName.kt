@@ -1,3 +1,5 @@
 package com.shinsro.privacies
 
-open class PersonName(private val value: String) : CharSequence by value
+import com.shinsro.common.StringValue
+
+open class PersonName(value: String) : StringValue(value)
