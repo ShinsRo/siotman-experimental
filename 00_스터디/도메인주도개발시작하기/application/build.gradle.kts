@@ -6,4 +6,5 @@ plugins {
 dependencies {
     val parentPath = parent?.path ?: ""
     implementation(project("$parentPath:domains"))
+    implementation(project("$parentPath:infra"))
 }
