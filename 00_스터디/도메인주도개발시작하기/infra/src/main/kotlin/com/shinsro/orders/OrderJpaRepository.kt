@@ -1,4 +1,4 @@
-package com.shinsro.orders.jpa
+package com.shinsro.orders
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository

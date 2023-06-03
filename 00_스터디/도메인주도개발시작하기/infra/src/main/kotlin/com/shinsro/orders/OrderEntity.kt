@@ -1,4 +1,4 @@
-package com.shinsro.orders.jpa
+package com.shinsro.orders
 
 import com.shinsro.customers.Customer
 import com.shinsro.customers.CustomerId

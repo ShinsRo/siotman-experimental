@@ -1,7 +1,5 @@
 package com.shinsro.orders
 
-import com.shinsro.orders.jpa.OrderEntity
-import com.shinsro.orders.jpa.OrderJpaRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
