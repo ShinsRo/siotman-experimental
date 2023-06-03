@@ -11,3 +11,5 @@ class Order(
 
     val products: List<Product>
 )
+
+class OrderNo(val value: String)
