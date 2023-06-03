@@ -6,7 +6,7 @@ class Address(
     val zipCode: ZipCode,
 
     val nation: String? = null,
-    val city: String? = null
+    val city: String? = null,
 )
 
-class ZipCode(private val value: String): CharSequence by value
+class ZipCode(private val value: String) : CharSequence by value

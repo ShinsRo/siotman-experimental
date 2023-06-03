@@ -5,5 +5,5 @@ import com.shinsro.privacies.PersonName
 
 class ShippingInfo(
     val recipientName: PersonName,
-    val address: Address
+    val address: Address,
 )

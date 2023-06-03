@@ -4,8 +4,8 @@ import com.shinsro.privacies.PersonName
 
 class Customer(
     val id: CustomerId,
-    val customerName: CustomerName
+    val customerName: CustomerName,
 )
 
-class CustomerId(private val value: String): CharSequence by value
-class CustomerName(private val value: String): PersonName(value)
+class CustomerId(private val value: String) : CharSequence by value
+class CustomerName(private val value: String) : PersonName(value)

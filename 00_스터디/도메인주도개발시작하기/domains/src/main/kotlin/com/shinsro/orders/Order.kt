@@ -9,7 +9,7 @@ class Order(
     val orderer: Customer,
     val shippingInfo: ShippingInfo,
 
-    val products: List<Product>
+    val products: List<Product>,
 )
 
 class OrderNo(val value: String)
