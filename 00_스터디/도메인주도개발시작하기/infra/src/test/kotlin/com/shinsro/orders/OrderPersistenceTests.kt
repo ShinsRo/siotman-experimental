@@ -20,7 +20,7 @@ import org.springframework.test.context.TestConstructor
 @ComponentScan("com.shinsro.orders")
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class OrderPersistenceTests(private val persistence: OrderPersistenceImpl) {
+class OrderPersistenceTests(private val persistence: OrderPersistence) {
 
     @Test
     fun `주문 엔티티 CRUD - 임시 테스트`() {
