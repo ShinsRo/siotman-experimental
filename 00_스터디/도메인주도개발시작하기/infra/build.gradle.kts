@@ -7,8 +7,9 @@ dependencies {
     val parentPath = parent?.path ?: ""
     implementation(project("$parentPath:domains"))
 
-    implementation("org.springframework.data:spring-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate:hibernate-core")
+    runtimeOnly("com.h2database:h2")
 
     val querydslVersion = "5.0.0"
     implementation("com.querydsl:querydsl-jpa:$querydslVersion")

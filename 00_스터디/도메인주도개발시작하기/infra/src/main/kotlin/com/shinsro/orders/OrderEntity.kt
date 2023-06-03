@@ -3,9 +3,6 @@ package com.shinsro.orders
 import com.shinsro.customers.Customer
 import com.shinsro.customers.CustomerId
 import com.shinsro.customers.CustomerName
-import com.shinsro.orders.Order
-import com.shinsro.orders.OrderNo
-import com.shinsro.orders.ShippingInfo
 import com.shinsro.privacies.Address
 import com.shinsro.privacies.PersonName
 import com.shinsro.privacies.ZipCode
