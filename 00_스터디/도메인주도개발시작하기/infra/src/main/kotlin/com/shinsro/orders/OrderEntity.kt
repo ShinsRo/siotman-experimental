@@ -1,8 +1,6 @@
 package com.shinsro.orders
 
 import com.shinsro.customers.Customer
-import javax.persistence.Access
-import javax.persistence.AccessType
 import javax.persistence.AttributeOverride
 import javax.persistence.AttributeOverrides
 import javax.persistence.Column
