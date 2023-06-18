@@ -1,11 +1,12 @@
 package com.shinsro.orders
 
 import com.shinsro.customers.Customer
-import com.shinsro.customers.CustomerId
-import com.shinsro.customers.CustomerName
-import com.shinsro.privacies.Address
-import com.shinsro.privacies.PersonName
-import com.shinsro.privacies.ZipCode
+import javax.persistence.Access
+import javax.persistence.AccessType
+import javax.persistence.AttributeOverride
+import javax.persistence.AttributeOverrides
+import javax.persistence.Column
+import javax.persistence.Embedded
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
@@ -14,30 +15,22 @@ import javax.persistence.Table
 @Table(name = "orders")
 class OrderEntity(
     @Id
-    val no: String,
-    val ordererId: String,
+    val no: OrderNo,
 
-    // TODO : shippingInfo, products
+    @Embedded
+    @AttributeOverrides(
+        AttributeOverride(name = "id", column = Column(name = "orderer_id")),
+        AttributeOverride(name = "customerName", column = Column(name = "orderer_name"))
+    )
+    val orderer: Customer
 ) {
     constructor(order: Order) : this(
-        no = order.no.toString(),
-        ordererId = order.orderer.id.toString(),
+        no = order.no,
+        orderer = order.orderer,
     )
 
-    fun toDomain(): Order {
-        return Order(
-            no = OrderNo(no),
-
-            // TODO : orderer, shippingInfo, products
-            orderer = Customer(
-                id = CustomerId(ordererId),
-                customerName = CustomerName(""),
-            ),
-            shippingInfo = ShippingInfo(
-                recipientName = PersonName(""),
-                address = Address("", "", ZipCode("")),
-            ),
-            products = listOf(),
-        )
-    }
+    fun toDomain() = Order(
+        no = no,
+        orderer = orderer
+    )
 }

@@ -6,6 +6,7 @@ plugins {
 dependencies {
     val parentPath = parent?.path ?: ""
     implementation(project("$parentPath:domains"))
+    implementation(project("$parentPath:application"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate:hibernate-core")

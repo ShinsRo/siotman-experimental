@@ -22,4 +22,3 @@ fun findSubProjectPaths(projectDir: File, pathPrefix: String = ""): List<String>
     val projectPath = "$pathPrefix${projectDir.name}"
     return listOf(projectPath) + files.map { findSubProjectPaths(it, "$projectPath:") }.flatten()
 }
-
